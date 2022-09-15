@@ -36,14 +36,15 @@ class AnnouncementAdminView(APIView, PaginationHandlerMixin):
     # 00-08 공지 생성
     def post(self, request):
         data = request.data
+        ########################
         announcement = {
-            "title" : data['title'],
-            "context" : data['context'],
-            "visible" : data['visible'],
-            "important" : data['important'],
-            "created_user" : request.user
+            "title": data['title'],
+            "context": data['context'],
+            "created_user": request.user,
+            "important": data['important'],
+            "visible": data['visible']
         }
-        
+        ########################
         serializer = AnnouncementSerializer(data=announcement)
         if serializer.is_valid():
             serializer.save()
@@ -55,25 +56,26 @@ class AnnouncementDetailAdminView(APIView):
 
     # 00-12 announcement_id인 announcement 조회
     def get(self, request, announcement_id):
+        ########################
         announcement = get_announcement(announcement_id)
-        serializer = AnnouncementSerializer(announcement)
+        serializer = AnnouncementSerializer(data=announcement)
+        ########################
         return Response(serializer.data)
 
     # 00-09 announcement_id인 announcement 수정
     def put(self, request, announcement_id):
         announcement = get_announcement(announcement_id)
+        ########################
         data = request.data
         obj = {
-            "title" : data['title'],
-            "context" : data['context'],
-            "visible" : data['visible'],
-            "important" : data['important'],
-            "created_user" : announcement.created_user
+            "title": data['title'],
+            "context": data['context'],
+            "important": data['important'],
+            "visible": data['visible'],
+            "created_user": announcement.created_user
         }
         serializer = AnnouncementSerializer(announcement, data=obj)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+        ########################
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 00-10 announcement 삭제
@@ -94,7 +96,10 @@ class AnnouncementCheckAdminView(APIView):
             "important" : data["important"],
         }
 
+        ########################
         serializer = AnnouncementCheckSerializer(announcement, data=obj)
+        ########################
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
